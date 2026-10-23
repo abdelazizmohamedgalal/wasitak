@@ -7,6 +7,8 @@ workflows:
     environment:
       flutter: stable
     scripts:
+      - name: Generate Android project files
+        script: flutter create --platforms=android .
       - name: Install dependencies
         script: flutter pub get
       - name: Build Android APK
