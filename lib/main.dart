@@ -349,6 +349,7 @@ class _HomePageState extends State<HomePage> {
         if (phone.isNotEmpty) Align(alignment: Alignment.centerLeft, child: TextButton.icon(onPressed: () => _callPhone(phone), icon: const Icon(Icons.phone), label: Text(phone))),
         ]),
       ),
+      ),
     );
   }
 
