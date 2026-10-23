@@ -66,6 +66,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int selectedCategory = 0;
   String search = '';
+  String locationFilter = '';
+  String listingTypeFilter = 'الكل';
   List<Map<String, dynamic>> ads = [];
   bool loading = true;
   bool saving = false;
@@ -116,10 +118,20 @@ class _HomePageState extends State<HomePage> {
 
       final title = (ad['title'] ?? '').toString();
       final details = (ad['description'] ?? '').toString();
-      final matchesSearch =
-          title.contains(search) || details.contains(search);
+      final location = (ad['location'] ?? '').toString();
+      final listingType = (ad['listing_type'] ?? '').toString();
+      final matchesSearch = title.contains(search) ||
+          details.contains(search) ||
+          location.contains(search);
+      final matchesLocation = locationFilter.isEmpty ||
+          location.toLowerCase().contains(locationFilter.toLowerCase());
+      final matchesType = listingTypeFilter == 'الكل' ||
+          (listingTypeFilter == 'إيجار' && listingType == 'rent') ||
+          (listingTypeFilter == 'بيع' && listingType == 'sale') ||
+          (listingTypeFilter == 'مشاركة سكن' && listingType == 'shared');
 
-      return matchesCategory && matchesSearch;
+      return matchesCategory && matchesSearch && matchesLocation &&
+          (selectedCategory != 1 || matchesType);
     }).toList();
 
     return Directionality(
@@ -194,6 +206,20 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
+              const SizedBox(height: 10),
+              TextField(
+                onChanged: (value) => setState(() => locationFilter = value.trim()),
+                decoration: InputDecoration(
+                  hintText: 'المنطقة أو الحي',
+                  prefixIcon: const Icon(Icons.location_on_outlined),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -204,6 +230,23 @@ class _HomePageState extends State<HomePage> {
                   _categoryButton('وظائف', 2),
                 ],
               ),
+              if (selectedCategory == 1) ...[
+                const SizedBox(height: 10),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(children: [
+                    for (final type in ['الكل', 'إيجار', 'بيع', 'مشاركة سكن'])
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: ChoiceChip(
+                          label: Text(type),
+                          selected: listingTypeFilter == type,
+                          onSelected: (_) => setState(() => listingTypeFilter = type),
+                        ),
+                      ),
+                  ]),
+                ),
+              ],
               const SizedBox(height: 22),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -285,6 +328,16 @@ class _HomePageState extends State<HomePage> {
     final description = (ad['description'] ?? '').toString();
     final location = (ad['location'] ?? 'بورسعيد').toString();
     final price = (ad['price_text'] ?? '').toString();
+    final listingType = (ad['listing_type'] ?? '').toString();
+    final area = (ad['area'] ?? '').toString();
+    final bedrooms = (ad['bedrooms'] ?? '').toString();
+    final propertyMeta = <String>[
+      if (listingType == 'rent') 'إيجار',
+      if (listingType == 'sale') 'للبيع',
+      if (listingType == 'shared') 'مشاركة سكن',
+      if (area.isNotEmpty) '$area م²',
+      if (bedrooms.isNotEmpty && bedrooms != '0') '$bedrooms غرف',
+    ].join(' • ');
 
     final images = (ad['image_urls'] as List<dynamic>? ?? []).map((e) => e.toString()).where((e) => e.isNotEmpty).toList();
     final phone = (ad['contact_phone'] ?? '').toString();
@@ -330,9 +383,16 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    '$location • $description',
+                    location,
                     style: const TextStyle(color: Colors.black54),
                   ),
+                  if (propertyMeta.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(propertyMeta, style: const TextStyle(color: green2, fontWeight: FontWeight.w600)),
+                  ],
+                  const SizedBox(height: 5),
+                  Text(description, maxLines: 2, overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.black54)),
                   const SizedBox(height: 7),
                   Text(
                     price.isEmpty ? 'السعر عند التواصل' : price,
@@ -431,6 +491,10 @@ class _HomePageState extends State<HomePage> {
     final pickedImages = <XFile>[];
     final picker = ImagePicker();
     String category = 'سكن';
+    String listingType = 'rent';
+    final locationController = TextEditingController(text: 'بورسعيد');
+    final areaController = TextEditingController();
+    final bedroomsController = TextEditingController();
 
     await showDialog(
       context: context,
@@ -454,10 +518,28 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 TextField(controller: priceController, decoration: const InputDecoration(labelText: 'السعر أو الراتب')),
+                TextField(controller: locationController, decoration: const InputDecoration(labelText: 'المنطقة / الحي')),
+                TextField(controller: areaController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'المساحة بالمتر (للسكن)')),
+                TextField(controller: bedroomsController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'عدد الغرف (للسكن)')),
                 TextField(controller: phoneController, keyboardType: TextInputType.phone, decoration: const InputDecoration(labelText: 'رقم الموبايل للتواصل')),
                 const SizedBox(height: 8),
                 OutlinedButton.icon(onPressed: () async { final files = await picker.pickMultiImage(imageQuality: 82); if (files.isNotEmpty) refreshDialog(() { pickedImages..clear()..addAll(files.take(5)); }); }, icon: const Icon(Icons.photo_library_outlined), label: Text(pickedImages.isEmpty ? 'اختيار صور (حتى 5)' : 'تم اختيار ${pickedImages.length} صور')),
                 if (pickedImages.isNotEmpty) Text(pickedImages.map((x) => x.name).join('، '), maxLines: 2, overflow: TextOverflow.ellipsis),
+                if (category == 'سكن') ...[
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<String>(
+                    value: listingType,
+                    decoration: const InputDecoration(labelText: 'نوع إعلان السكن'),
+                    items: const [
+                      DropdownMenuItem(value: 'rent', child: Text('إيجار')),
+                      DropdownMenuItem(value: 'sale', child: Text('بيع')),
+                      DropdownMenuItem(value: 'shared', child: Text('مشاركة سكن')),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) refreshDialog(() => listingType = value);
+                    },
+                  ),
+                ],
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
                   value: category,
@@ -508,7 +590,10 @@ class _HomePageState extends State<HomePage> {
                     'price_text': priceController.text.trim().isEmpty
                         ? 'السعر عند التواصل'
                         : priceController.text.trim(),
-                    'location': 'بورسعيد',
+                    'location': locationController.text.trim().isEmpty ? 'بورسعيد' : locationController.text.trim(),
+                    'listing_type': category == 'سكن' ? listingType : null,
+                    'area': int.tryParse(areaController.text.trim()) ?? 0,
+                    'bedrooms': int.tryParse(bedroomsController.text.trim()) ?? 0,
                     'contact_phone': phoneController.text.trim(),
                     'image_urls': await _uploadImages(pickedImages.take(5).toList(), user.id),
                     'user_id': user.id,
@@ -535,6 +620,9 @@ class _HomePageState extends State<HomePage> {
                   detailsController.dispose();
                   priceController.dispose();
                   phoneController.dispose();
+                  locationController.dispose();
+                  areaController.dispose();
+                  bedroomsController.dispose();
 
                   if (mounted) setState(() => saving = false);
                 }
