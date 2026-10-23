@@ -378,7 +378,13 @@ class _HomePageState extends State<HomePage> {
       title: const Text('دخول الإدارة'), content: SizedBox(width: 360, child: Column(mainAxisSize: MainAxisSize.min, children: [
         TextField(controller: email, keyboardType: TextInputType.emailAddress, decoration: const InputDecoration(labelText: 'البريد الإلكتروني')),
         TextField(controller: password, obscureText: true, decoration: const InputDecoration(labelText: 'كلمة المرور')),
-      ])), actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')), FilledButton(onPressed: () async {
+      ])), actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')), TextButton(onPressed: () async {
+        try {
+          final response = await db.auth.signUp(email: email.text.trim(), password: password.text);
+          if (ctx.mounted) Navigator.pop(ctx);
+          if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.session == null ? 'تم إنشاء الطلب. لو طلب Supabase تأكيد البريد، افتح رسالة التأكيد ثم سجّل الدخول.' : 'تم إنشاء الحساب. يلزم تفعيله كمدير من قاعدة البيانات.')));
+        } catch (e) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تعذر إنشاء الحساب: $e'))); }
+      }, child: const Text('إنشاء حساب المدير')), FilledButton(onPressed: () async {
         try {
           final response = await db.auth.signInWithPassword(email: email.text.trim(), password: password.text);
           if (response.user == null) throw Exception('تعذر تسجيل الدخول');
