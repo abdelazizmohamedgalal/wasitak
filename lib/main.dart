@@ -6,7 +6,10 @@ const supabaseUrl = 'https://xjmvzigoptweolpdsfhp.supabase.co';
 const supabaseKey =
     'sb_publishable_YePsC3nUCuCKqA0Sa997Qg_IJ0eEUVW';
 
-const green = Color(0xFF16834A);
+const green = Color(0xFF123D32);
+const green2 = Color(0xFF1B6651);
+const gold = Color(0xFFC7A45B);
+const ivory = Color(0xFFF7F5EF);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +35,17 @@ class WasitakApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: green),
+        scaffoldBackgroundColor: ivory,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: green,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: false,
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: gold,
+          foregroundColor: green,
+        ),
         fontFamily: 'Arial',
       ),
       home: const HomePage(),
@@ -108,7 +122,7 @@ class _HomePageState extends State<HomePage> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF6F8F6),
+        backgroundColor: ivory,
         appBar: AppBar(
           backgroundColor: green,
           foregroundColor: Colors.white,
@@ -132,23 +146,34 @@ class _HomePageState extends State<HomePage> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: green,
-                  borderRadius: BorderRadius.circular(20),
+                  gradient: const LinearGradient(
+                    colors: [green, green2],
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                  ),
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: green.withOpacity(0.16),
+                      blurRadius: 22,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
                 ),
                 child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'كل اللي بتدور عليه في مكان واحد',
+                      'وسيطك | فرصتك أقرب',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 21,
+                        fontSize: 23,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(height: 8),
                     Text(
-                      'سكن ووظائف في بورسعيد',
+                      'دليلك للسكن والشغل في بورسعيد',
                       style: TextStyle(color: Colors.white, fontSize: 15),
                     ),
                   ],
@@ -164,7 +189,7 @@ class _HomePageState extends State<HomePage> {
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide.none,
                   ),
                 ),
@@ -246,7 +271,7 @@ class _HomePageState extends State<HomePage> {
         style: FilledButton.styleFrom(
           backgroundColor: selected ? green : Colors.white,
           foregroundColor: selected ? Colors.white : Colors.black87,
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          padding: const EdgeInsets.symmetric(vertical: 13),
         ),
         onPressed: () => setState(() => selectedCategory = index),
         child: Text(label),
@@ -264,20 +289,20 @@ class _HomePageState extends State<HomePage> {
     return Card(
       color: Colors.white,
       elevation: 0,
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 14),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: Color(0xFFE5EAE6)),
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: Color(0xFFE5E0D5)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Row(
           children: [
             Container(
-              width: 58,
-              height: 58,
+              width: 62,
+              height: 62,
               decoration: BoxDecoration(
-                color: const Color(0xFFE4F4E9),
+                color: const Color(0xFFE8EFE8),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Icon(
