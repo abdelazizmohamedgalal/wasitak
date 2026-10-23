@@ -348,7 +348,7 @@ class _HomePageState extends State<HomePage> {
         ),
         if (phone.isNotEmpty) Align(alignment: Alignment.centerLeft, child: TextButton.icon(onPressed: () => _callPhone(phone), icon: const Icon(Icons.phone), label: Text(phone))),
         ]),
-      ),)),
+      ),
     );
   }
 
@@ -404,7 +404,7 @@ class _HomePageState extends State<HomePage> {
       if (!mounted) return;
       await showDialog(context: context, builder: (ctx) => Directionality(textDirection: TextDirection.rtl, child: AlertDialog(
         title: const Text('لوحة إدارة الإعلانات'), content: SizedBox(width: 480, height: 480, child: ListView(children: [
-          for (final item in List<Map<String,dynamic>>.from(rows)) Card(child: ListTile(title: Text((item['title'] ?? '').toString()), subtitle: Text('الحالة: ${item['status']} • ${item['category'] == 'housing' ? 'سكن' : 'وظائف'}'), onTap: () => _showAdDetails(item), trailing: item['status'] == 'pending' ? Wrap(mainAxisSize: MainAxisSize.min, children: [IconButton(tooltip: 'قبول', icon: const Icon(Icons.check_circle, color: Colors.green), onPressed: () async { await db.from('listings').update({'status':'published'}).eq('id', item['id']); if (ctx.mounted) Navigator.pop(ctx); await _loadAds(); await _showAdminDashboard(); }), IconButton(tooltip: 'رفض', icon: const Icon(Icons.cancel, color: Colors.red), onPressed: () async { await db.from('listings').update({'status':'rejected'}).eq('id', item['id']); if (ctx.mounted) Navigator.pop(ctx); await _loadAds(); await _showAdminDashboard(); })]) : null)),
+          for (final item in List<Map<String,dynamic>>.from(rows)) Card(child: ListTile(title: Text((item['title'] ?? '').toString()), subtitle: Text('الحالة: ${item['status']} • ${item['category'] == 'housing' ? 'سكن' : 'وظائف'}'), onTap: () => _showAdDetails(item), trailing: item['status'] == 'pending' ? Wrap(children: [IconButton(tooltip: 'قبول', icon: const Icon(Icons.check_circle, color: Colors.green), onPressed: () async { await db.from('listings').update({'status':'published'}).eq('id', item['id']); if (ctx.mounted) Navigator.pop(ctx); await _loadAds(); await _showAdminDashboard(); }), IconButton(tooltip: 'رفض', icon: const Icon(Icons.cancel, color: Colors.red), onPressed: () async { await db.from('listings').update({'status':'rejected'}).eq('id', item['id']); if (ctx.mounted) Navigator.pop(ctx); await _loadAds(); await _showAdminDashboard(); })]) : null)),
         ])), actions: [TextButton(onPressed: () async { await db.auth.signOut(); if (ctx.mounted) Navigator.pop(ctx); }, child: const Text('خروج الإدارة')), TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إغلاق'))],
       )));
     } catch (e) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تعذر فتح لوحة الإدارة: $e'))); }
