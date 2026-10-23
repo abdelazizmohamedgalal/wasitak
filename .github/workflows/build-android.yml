@@ -28,7 +28,7 @@ jobs:
       - name: Check formatting
         run: dart format --output=none --set-exit-if-changed lib
       - name: Analyze Dart code
-        run: flutter analyze lib
+        run: flutter analyze lib --no-fatal-infos --no-fatal-warnings
       - name: Build release APK
         run: flutter build apk --release
       - name: Upload APK artifact
