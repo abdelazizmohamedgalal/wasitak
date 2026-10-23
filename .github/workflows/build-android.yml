@@ -23,6 +23,8 @@ jobs:
         run: flutter create --platforms=android .
       - name: Install dependencies
         run: flutter pub get
+      - name: Format Dart source
+        run: dart format lib
       - name: Check formatting
         run: dart format --output=none --set-exit-if-changed lib
       - name: Analyze Dart code
