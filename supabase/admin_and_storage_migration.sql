@@ -1,6 +1,6 @@
 -- Wasitak secure admin + listing image storage setup
--- Run this file once in Supabase SQL Editor after creating the permanent admin account.
--- Then replace the UUID below with that account's auth.users.id.
+-- Create the permanent account in the app first using the admin email, then run this file in Supabase SQL Editor.
+-- The final INSERT registers that exact email as the first admin if the account already exists.
 
 create table if not exists public.admin_users (
   user_id uuid primary key references auth.users(id) on delete cascade,
@@ -55,7 +55,8 @@ create policy "Users delete images in their own folder"
     and (storage.foldername(name))[1] = auth.uid()::text
   );
 
--- BOOTSTRAP ADMIN after creating the account and signing in at least once:
--- select id, email from auth.users where email = 'abdelazizmohamedgalal@gmail.com';
--- insert into public.admin_users(user_id) values ('PASTE_AUTH_USER_UUID_HERE')
--- on conflict (user_id) do nothing;
+-- Register the designated admin account. If the account has not been created yet, create it in the app and rerun this final INSERT.
+insert into public.admin_users (user_id)
+select id from auth.users
+where lower(email) = lower('abdelazizmohamedgalal@gmail.com')
+on conflict (user_id) do nothing;
