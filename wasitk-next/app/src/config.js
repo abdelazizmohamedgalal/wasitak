@@ -1,3 +1,5 @@
-// Override with EXPO_PUBLIC_API_URL for deployment.
-// Change the LAN address for local testing on a real phone.
-export const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.10:3000';
+// Set EXPO_PUBLIC_API_URL to the deployed HTTPS API URL when building.
+// There is deliberately no private-LAN fallback: it cannot work off the user's Wi-Fi.
+const configuredUrl = process.env.EXPO_PUBLIC_API_URL;
+export const API_URL = configuredUrl ? configuredUrl.replace(/\/$/, '') : '';
+export const API_CONFIGURED = /^https:\/\//i.test(API_URL);
