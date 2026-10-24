@@ -1,0 +1,42 @@
+name: Build Wasitak Next Android APK
+on:
+  push:
+    branches: [integrate/wasitk-next-clean]
+    paths:
+      - 'wasitk-next/app/**'
+      - '.github/workflows/build-wasitak-next-android.yml'
+  workflow_dispatch:
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: wasitk-next/app
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.0'
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install Expo dependencies
+        run: npm install
+      - name: Generate Android project
+        run: npx expo prebuild --platform android --non-interactive
+      - name: Build release APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasitak-next-android-apk
+          path: wasitk-next/app/android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+          retention-days: 14
