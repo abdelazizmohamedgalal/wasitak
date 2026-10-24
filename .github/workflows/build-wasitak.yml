@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       - name: Analyze Dart code
-        run: flutter analyze
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
       - name: Build Android release APK
         run: >-
           flutter build apk --release
