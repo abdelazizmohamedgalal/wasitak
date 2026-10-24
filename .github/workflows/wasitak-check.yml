@@ -1,0 +1,20 @@
+name: Check Wasitak starter
+
+on:
+  push:
+    branches: [main, wasitak-next]
+  pull_request:
+    branches: [main]
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.13.0"
+      - name: Check JavaScript syntax
+        run: node --check wasitak-next/server.js
+      - name: Check package metadata
+        run: node -e "const p=require('./wasitak-next/package.json'); if(p.scripts.start!=='node server.js') process.exit(1)"
