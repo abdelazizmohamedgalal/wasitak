@@ -1,0 +1,14 @@
+{
+  "name": "Wasitak Next - Node 22",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "forwardPorts": [
+    3000
+  ],
+  "portsAttributes": {
+    "3000": {
+      "label": "Wasitak website",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "postCreateCommand": "node --version"
+}
