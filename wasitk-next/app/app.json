@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "وسيطك",
+    "slug": "wasitk-next",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": { "backgroundColor": "#f3f8fa" },
+    "android": { "package": "com.wasitk.next", "usesCleartextTraffic": true },
+    "ios": { "bundleIdentifier": "com.wasitk.next" },
+    "plugins": ["expo-image-picker", "expo-document-picker"]
+  }
+}

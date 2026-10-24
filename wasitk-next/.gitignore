@@ -1,0 +1,12 @@
+node_modules/
+server/data/
+server/uploads/*
+!server/uploads/.gitkeep
+server/.secret
+server/.visitor-secret
+.env
+.env.*
+!.env.example
+*.db
+*.db-shm
+*.db-wal

@@ -1,0 +1,10 @@
+{
+  "name": "wasitk-next-server",
+  "version": "1.0.0",
+  "private": true,
+  "engines": { "node": ">=22.13.0" },
+  "scripts": {
+    "start": "node index.js",
+    "test": "node ../scripts/smoke-test.js"
+  }
+}

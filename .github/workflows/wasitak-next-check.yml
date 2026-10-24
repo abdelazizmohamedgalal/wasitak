@@ -1,0 +1,22 @@
+name: Wasitak Next checks
+on:
+  push:
+    branches: [integrate/wasitk-next-clean]
+    paths:
+      - 'wasitk-next/**'
+      - '.github/workflows/wasitak-next-check.yml'
+  pull_request:
+    paths:
+      - 'wasitk-next/**'
+      - '.github/workflows/wasitak-next-check.yml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.0'
+      - name: Validate syntax and smoke tests
+        working-directory: wasitk-next
+        run: npm run check
