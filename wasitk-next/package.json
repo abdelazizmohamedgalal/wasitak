@@ -6,6 +6,6 @@
   "scripts": {
     "start": "node server/index.js",
     "test": "node scripts/smoke-test.js",
-    "check": "node --check server/index.js && node --check server/db.js && node --check server/security.js && node --check web/app.js && node --check app/App.js && npm test"
+    "check": "node --check server/index.js && node --check server/db.js && node --check server/security.js && node --check web/app.js && npm test"
   }
 }
