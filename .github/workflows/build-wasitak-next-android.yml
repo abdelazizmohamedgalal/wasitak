@@ -5,6 +5,10 @@ on:
     paths:
       - 'wasitk-next/app/**'
       - '.github/workflows/build-wasitak-next-android.yml'
+  pull_request:
+    paths:
+      - 'wasitk-next/app/**'
+      - '.github/workflows/build-wasitak-next-android.yml'
   workflow_dispatch:
 jobs:
   build-android:
