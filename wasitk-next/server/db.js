@@ -1,0 +1,18 @@
+'use strict';
+const fs = require('node:fs');
+const path = require('node:path');
+const {DatabaseSync} = require('node:sqlite');
+const dir = path.join(__dirname,'data');
+fs.mkdirSync(dir,{recursive:true});
+const db = new DatabaseSync(process.env.WASITK_DB || path.join(dir,'wasitk.db'));
+db.exec(`PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL;
+CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY,name TEXT NOT NULL,email TEXT NOT NULL UNIQUE,password_hash TEXT NOT NULL,role TEXT NOT NULL DEFAULT 'member',status TEXT NOT NULL DEFAULT 'active',created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS listings(id INTEGER PRIMARY KEY,owner_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,kind TEXT NOT NULL CHECK(kind IN ('property','job','seeker')),title TEXT NOT NULL,description TEXT NOT NULL DEFAULT '',city TEXT NOT NULL DEFAULT 'بورسعيد',district TEXT NOT NULL DEFAULT '',price REAL,category TEXT NOT NULL DEFAULT '',contact TEXT NOT NULL DEFAULT '',image_path TEXT,cv_path TEXT,status TEXT NOT NULL DEFAULT 'pending',created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS applications(id INTEGER PRIMARY KEY,job_id INTEGER NOT NULL REFERENCES listings(id) ON DELETE CASCADE,applicant_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,cover_letter TEXT NOT NULL DEFAULT '',cv_path TEXT,created_at TEXT DEFAULT CURRENT_TIMESTAMP,UNIQUE(job_id,applicant_id));
+CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY,value TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS visit_days(day TEXT PRIMARY KEY,views INTEGER NOT NULL DEFAULT 0);
+CREATE TABLE IF NOT EXISTS visitor_sessions(day TEXT NOT NULL,visitor_hash TEXT NOT NULL,PRIMARY KEY(day,visitor_hash));
+INSERT OR IGNORE INTO settings VALUES('require_approval','1');
+CREATE INDEX IF NOT EXISTS listings_public_idx ON listings(kind,status,created_at);
+CREATE INDEX IF NOT EXISTS applications_job_idx ON applications(job_id,created_at);`);
+module.exports = db;
