@@ -5,9 +5,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-const supabaseUrl = 'https://xjmvzigoptweolpdsfhp.supabase.co';
-const supabaseKey =
-    'sb_publishable_YePsC3nUCuCKqA0Sa997Qg_IJ0eEUVW';
+const supabaseUrl = String.fromEnvironment(
+  'SUPABASE_URL',
+  defaultValue: 'https://xjmvzigoptweolpdsfhp.supabase.co',
+);
+const supabaseKey = String.fromEnvironment(
+  'SUPABASE_ANON_KEY',
+  defaultValue: 'sb_publishable_YePsC3nUCuCKqA0Sa997Qg_IJ0eEUVW',
+);
 
 const green = Color(0xFF123D32);
 const green2 = Color(0xFF1B6651);
