@@ -6,7 +6,7 @@ assert.equal(verifyPassword('correct horse battery staple',value),true);
 assert.equal(verifyPassword('wrong password',value),false);
 const token=sign({id:7,role:'member'});
 assert.equal(verify(token).id,7);
-assert.equal(verify(token.slice(0,-1)+(token.endsWith('a')?'b':'a')),null);
+const pieces=token.split('.'); pieces[2]=(pieces[2][0]==='a'?'b':'a')+pieces[2].slice(1); assert.equal(verify(pieces.join('.')),null);
 const db=require('../server/db');
 assert.ok(db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='listings'").get());
 console.log('Wasitak smoke tests passed');
